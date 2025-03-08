@@ -1,0 +1,2 @@
+CompileFlags:
+  Add: [-std=c11, -ffreestanding, -Wall, -marm, -target, arm-linux-gnueabi, -Isysinc]

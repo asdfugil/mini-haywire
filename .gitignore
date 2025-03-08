@@ -1,0 +1,15 @@
+!build/.keep
+build/
+__pycache__
+*.pyc
+*.macho
+*.swp
+*.orig
+*.rej
+.DS_Store
+/mini\.spec
+/mini-rust-deps\.patch
+/rust-fatfs-fix-build-log\.patch
+/mini-*\.src\.rpm
+/mini-*\.tar\.gz
+/rust-fatfs-*\.tar\.gz
