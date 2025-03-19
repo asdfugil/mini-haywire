@@ -319,15 +319,17 @@ static int dt_set_memory(void)
         if (num_regions >= MAX_MEM_REGIONS)
             bail("FDT: Out of memory regions for initrd\n");
 
-        if (((uintptr_t)initrd_start | initrd_size) & (PAGE_SIZE - 1))
+        size_t aligned_initrd_size = ALIGN_UP(initrd_size, PAGE_SIZE);
+
+        if ((uintptr_t)initrd_start & (PAGE_SIZE - 1))
             bail("FDT: initrd %p...0x%x is not page aligned\n", initrd_start,
                  (uintptr_t)initrd_start + initrd_size);
 
         printf("FDT: Adding initrd %p...0x%x to RAM map\n", initrd_start,
-               (uintptr_t)initrd_start + initrd_size);
+               (uintptr_t)initrd_start + aligned_initrd_size);
 
         memreg[num_regions].start = cpu_to_fdt32((uintptr_t)initrd_start);
-        memreg[num_regions++].size = cpu_to_fdt32(initrd_size);
+        memreg[num_regions++].size = cpu_to_fdt32(aligned_initrd_size);
     }
 
     if (num_regions >= MAX_MEM_REGIONS)
@@ -478,7 +480,7 @@ void kboot_set_initrd(void *start, size_t size)
     void *initrd = (void *)top_of_memory_alloc(size);
     memcpy(initrd, start, size);
     initrd_start = initrd;
-    initrd_size = ALIGN_UP(size, PAGE_SIZE);
+    initrd_size = size;
     ;
 }
 
