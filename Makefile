@@ -17,8 +17,11 @@ endif
 ifeq ($(shell uname -m),arm)
 ARCH ?=
 else
-ARCH ?= arm-linux-gnueabi-
+ARCH ?= arm-linux-gnueabi
+LIBGCC_ARCH = arm-none-eabi
 endif
+
+ARCH_ := $(ARCH)-
 
 ifneq ($(TOOLCHAIN),$(LLDDIR))
 $(info INFO: LLD path: $(LLDDIR))
@@ -32,10 +35,10 @@ OBJCOPY := $(TOOLCHAIN)llvm-objcopy
 CLANG_FORMAT ?= $(TOOLCHAIN)clang-format
 EXTRA_CFLAGS ?=
 else
-CC := $(TOOLCHAIN)$(ARCH)gcc
-AS := $(TOOLCHAIN)$(ARCH)gcc
-LD := $(TOOLCHAIN)$(ARCH)ld
-OBJCOPY := $(TOOLCHAIN)$(ARCH)objcopy
+CC := $(TOOLCHAIN)$(ARCH_)gcc
+AS := $(TOOLCHAIN)$(ARCH_)gcc
+LD := $(TOOLCHAIN)$(ARCH_)ld
+OBJCOPY := $(TOOLCHAIN)$(ARCH_)objcopy
 CLANG_FORMAT ?= clang-format
 EXTRA_CFLAGS ?= -Wstack-usage=1024
 endif
@@ -72,7 +75,13 @@ LDFLAGS := -EL -marmelf --no-undefined -X -Bsymbolic \
 ifeq ($(shell uname),Darwin)
 	LDFLAGS += $(wildcard /Applications/ArmGNUToolchain/*/arm-none-eabi//lib/gcc/arm-none-eabi/*/libgcc.a)
 else
-	LDFLAGS += /usr/arm-none-eabi/lib/libgcc.a
+ifeq ($(LIBGCC),)
+	LIBGCC = $(wildcard /usr/$(LIBGCC_ARCH)/lib/libgcc.a)
+endif
+ifeq ($(LIBGCC),)
+	LIBGCC = $(wildcard /usr/lib/gcc/$(LIBGCC_ARCH)/*/libgcc.a)
+endif
+	LDFLAGS += $(LIBGCC)
 endif
 
 MINILZLIB_OBJECTS := $(patsubst %,minilzlib/%, \
