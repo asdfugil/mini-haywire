@@ -997,7 +997,7 @@ class M1N1Proxy(Reloadable):
     def kboot_prepare_dt(self, dt_addr):
         return self.request(self.P_KBOOT_PREPARE_DT, dt_addr)
     def kboot_get_dt(self):
-        return self.request(self.P_KBOOT_PREPARE_DT)
+        return self.request(self.P_KBOOT_GET_DT)
 
     def pmgr_clock_enable(self, clkid):
         return self.request(self.P_PMGR_CLOCK_ENABLE, clkid)

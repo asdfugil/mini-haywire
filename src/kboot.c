@@ -336,12 +336,12 @@ static int dt_set_memory(void)
         bail("FDT: Out of memory regions for FDT\n");
 
     if (((uintptr_t)dt | dt_bufsize) & (PAGE_SIZE - 1))
-        bail("FDT: FDT %p...0x%x is not page aligned\n", dt, (uintptr_t)initrd_start + initrd_size);
+        bail("FDT: FDT %p...0x%x is not page aligned\n", dt, (uintptr_t)dt + dt_bufsize);
 
     printf("FDT: Adding FDT %p...0x%x to RAM map\n", dt, (uintptr_t)dt + dt_bufsize);
 
-    memreg[num_regions].start = cpu_to_fdt32((uintptr_t)initrd_start);
-    memreg[num_regions++].size = cpu_to_fdt32(initrd_size);
+    memreg[num_regions].start = cpu_to_fdt32((uintptr_t)dt);
+    memreg[num_regions++].size = cpu_to_fdt32(dt_bufsize);
 
     int node = fdt_path_offset(dt, "/memory");
     if (node < 0)
@@ -650,7 +650,8 @@ int kboot_prepare_dt(void *fdt)
 
 int kboot_boot(void *kernel)
 {
-    usb_init();
+    if (!usb_up)
+        usb_init();
 
     printf("Preparing to boot kernel at %p with fdt at %p\n", kernel, dt);
 

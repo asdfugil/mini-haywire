@@ -29,6 +29,7 @@ const char *const mini_version = version_tag + 12;
 
 u32 board_id = ~0, chip_id = ~0;
 struct vector_args next_stage;
+bool usb_up;
 
 void get_device_info(void)
 {
@@ -97,6 +98,8 @@ run_proxy:
 
     usb_init();
     usb_iodev_init();
+
+    usb_up = true;
 
     printf("Running proxy...\n");
 

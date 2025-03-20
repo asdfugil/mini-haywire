@@ -23,6 +23,8 @@ extern char _rodata_end[];
 extern volatile enum exc_guard_t exc_guard;
 extern volatile int exc_count;
 
+extern bool usb_up;
+
 void flush_and_reboot(void);
 
 #define panic(fmt, ...)                                                                            \
